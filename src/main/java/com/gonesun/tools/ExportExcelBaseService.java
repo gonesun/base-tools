@@ -10,8 +10,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ExportExcelBaseService {
-    private static final Logger logger = LoggerFactory.getLogger(ExportExcelBaseService.class);
+public class ExportExcelBaseService<T> {
+//    private static final Logger logger = LoggerFactory.getLogger(ExportExcelBaseService.class);
 
     private final String emptyString = "";
 
@@ -33,7 +31,7 @@ public class ExportExcelBaseService {
      * 导出多页签
      * @param headMapList  Excel头数据
      * @param pageTitleList 页签名称列表
-     * @param dataList 页签数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 页签数据列表
      * @param fieldName 报表Excel模板文件名（带路径的全名）
      * @param sheetIndex Excel中某个页签（0..）
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -41,7 +39,7 @@ public class ExportExcelBaseService {
      * @throws ToolBusinessException
      */
     public byte[] exportAll(List<Map<String, String>> headMapList, List<String> pageTitleList,
-                                                   List<List<?>> dataList, String fieldName, int sheetIndex, List<String> unFixColList)
+                                                   List<List<T>> dataList, String fieldName, int sheetIndex, List<String> unFixColList)
             throws ToolBusinessException {
         return exportAll(headMapList, pageTitleList, dataList, fieldName, sheetIndex, unFixColList, null);
     }
@@ -50,7 +48,7 @@ public class ExportExcelBaseService {
      * 导出多页签
      * @param headMapList  Excel头数据
      * @param pageTitleList 页签名称列表
-     * @param dataList 页签数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 页签数据列表
      * @param fieldName 报表Excel模板文件名（带路径的全名）
      * @param sheetIndex Excel中某个页签（0..）
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -59,7 +57,7 @@ public class ExportExcelBaseService {
      * @throws ToolBusinessException
      */
     public byte[] exportAll(List<Map<String, String>> headMapList, List<String> pageTitleList,
-                                                   List<List<?>> dataList, String fieldName, int sheetIndex, List<String> unFixColList,
+                                                   List<List<T>> dataList, String fieldName, int sheetIndex, List<String> unFixColList,
                                                    Map<String, String> userMap) throws ToolBusinessException {
         return exportAll(headMapList, pageTitleList, dataList, fieldName, sheetIndex, unFixColList, userMap, false);
     }
@@ -68,7 +66,7 @@ public class ExportExcelBaseService {
      * 导出多页签
      * @param headMapList  Excel头数据
      * @param pageTitleList 页签名称列表
-     * @param dataList 页签数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 页签数据列表
      * @param fieldName 报表Excel模板文件名（带路径的全名）
      * @param sheetIndex Excel中某个页签（0..）
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -78,9 +76,9 @@ public class ExportExcelBaseService {
      * @throws ToolBusinessException
      */
     public byte[] exportAll(List<Map<String, String>> headMapList, List<String> pageTitleList,
-                                                   List<List<?>> dataList, String fieldName, int sheetIndex, List<String> unFixColList,
+                                                   List<List<T>> dataList, String fieldName, int sheetIndex, List<String> unFixColList,
                                                    Map<String, String> userMap, boolean needCatalog) throws ToolBusinessException {
-        ExportExcelParamDto paramDto = new ExportExcelParamDto(headMapList, pageTitleList, dataList, fieldName, sheetIndex);
+        ExportExcelParamDto<T> paramDto = new ExportExcelParamDto<>(headMapList, pageTitleList, dataList, fieldName, sheetIndex);
         paramDto.setUnFixColList(unFixColList);
         paramDto.setUnFixColNameMap(userMap);
         paramDto.setNeedCatalog(needCatalog);
@@ -91,7 +89,7 @@ public class ExportExcelBaseService {
      * 导出多页签
      * @param headMapList  Excel头数据
      * @param pageTitleList 页签名称列表
-     * @param dataList 页签数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 页签数据列表
      * @param fieldName 报表Excel模板文件名（带路径的全名）
      * @param sheetIndexList Excel中页签（0..）列表
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -100,7 +98,7 @@ public class ExportExcelBaseService {
      * @throws ToolBusinessException
      */
     public byte[] exportAll(List<Map<String, String>> headMapList, List<String> pageTitleList,
-                                                   List<List<?>> dataList, String fieldName,
+                                                   List<List<T>> dataList, String fieldName,
                                                    List<Integer> sheetIndexList, List<String> unFixColList,
                                                    Map<String, String> userMap) throws ToolBusinessException {
         return exportAll(headMapList, pageTitleList, dataList, fieldName, sheetIndexList, unFixColList, userMap, false);
@@ -110,7 +108,7 @@ public class ExportExcelBaseService {
      * 导出多页签
      * @param headMapList  Excel头数据
      * @param pageTitleList 页签名称列表
-     * @param dataList 页签数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 页签数据列表
      * @param fieldName 报表Excel模板文件名（带路径的全名）
      * @param sheetIndexList Excel中页签（0..）列表
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -120,20 +118,20 @@ public class ExportExcelBaseService {
      * @throws ToolBusinessException
      */
     public byte[] exportAll(List<Map<String, String>> headMapList, List<String> pageTitleList,
-                                                   List<List<?>> dataList, String fieldName,
+                                                   List<List<T>> dataList, String fieldName,
                                                    List<Integer> sheetIndexList, List<String> unFixColList,
                                                    Map<String, String> userMap, boolean needCatalog) throws ToolBusinessException {
-        ExportExcelParamDto paramDto = new ExportExcelParamDto(headMapList, pageTitleList, dataList, fieldName, sheetIndexList);
+        ExportExcelParamDto<T> paramDto = new ExportExcelParamDto<>(headMapList, pageTitleList, dataList, fieldName, sheetIndexList);
         paramDto.setUnFixColList(unFixColList);
         paramDto.setUnFixColNameMap(userMap);
         paramDto.setNeedCatalog(needCatalog);
         return exportAll(paramDto);
     }
 
-    public byte[] exportAll(ExportExcelParamDto paramDto) throws ToolBusinessException {
+    public byte[] exportAll(ExportExcelParamDto<T> paramDto) throws ToolBusinessException {
         List<Map<String, String>> headMapList = paramDto.getHeadMapList();
         List<String> pageTitleList = paramDto.getSheetNameList();
-        List<List<?>> dataList = paramDto.getBatchDataList();
+        List<List<T>> dataList = paramDto.getBatchDataList();
         String fieldName = paramDto.getFieldName();
         List<Integer> sheetIndexList = paramDto.getSheetIndexList();
         Integer sheetIndex = paramDto.getSheetIndex();
@@ -261,13 +259,13 @@ public class ExportExcelBaseService {
     /**
      * 导出Excel文件
      * @param headMap Excel头数据
-     * @param dataList 数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 数据列表
      * @param fieldName 全名，包含路径及其文件扩展名.xls(例如/template/gl/balanceSumAuxRpt.xls),请按不同的领域创建例如/template/xx/xxx.xls
      * @param sheetIndex Excel中某个页签（0..）
      * @return
      * @throws ToolBusinessException
      */
-    public byte[] export(Map<String, String> headMap, List<?> dataList, String fieldName,
+    public byte[] export(Map<String, String> headMap, List<T> dataList, String fieldName,
                                                 int sheetIndex) throws ToolBusinessException {
         return export(headMap, dataList, fieldName, sheetIndex, null);
     }
@@ -275,14 +273,14 @@ public class ExportExcelBaseService {
     /**
      * 导出Excel文件
      * @param headMap Excel头数据
-     * @param dataList 数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 数据列表
      * @param fieldName 全名，包含路径及其文件扩展名.xls(例如/template/gl/balanceSumAuxRpt.xls),请按不同的领域创建例如/template/xx/xxx.xls
      * @param sheetIndex Excel中某个页签（0..）
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
      * @return
      * @throws ToolBusinessException
      */
-    public byte[] export(Map<String, String> headMap, List<?> dataList, String fieldName,
+    public byte[] export(Map<String, String> headMap, List<T> dataList, String fieldName,
                                                 int sheetIndex, List<String> unFixColList) throws ToolBusinessException {
         return export(headMap, dataList, fieldName, sheetIndex, unFixColList, null);
     }
@@ -290,7 +288,7 @@ public class ExportExcelBaseService {
     /**
      * 导出Excel文件
      * @param headMap Excel头数据
-     * @param dataList 数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 数据列表
      * @param fieldName 全名，包含路径及其文件扩展名.xls(例如/template/gl/balanceSumAuxRpt.xls),请按不同的领域创建例如/template/xx/xxx.xls
      * @param sheetIndex Excel中某个页签（0..）
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -298,7 +296,7 @@ public class ExportExcelBaseService {
      * @return
      * @throws ToolBusinessException
      */
-    public byte[] export(Map<String, String> headMap, List<?> dataList, String fieldName,
+    public byte[] export(Map<String, String> headMap, List<T> dataList, String fieldName,
                                                 int sheetIndex, List<String> unFixColList, Map<String, String> userMap) throws ToolBusinessException {
         return export(headMap, dataList, fieldName, sheetIndex, unFixColList, userMap, null);
     }
@@ -306,7 +304,7 @@ public class ExportExcelBaseService {
     /**
      * 导出Excel文件
      * @param headMap Excel头数据
-     * @param dataList 数据列表 com.ttk.edf.base.DTO 的子类
+     * @param dataList 数据列表
      * @param fieldName 全名，包含路径及其文件扩展名.xls(例如/template/gl/balanceSumAuxRpt.xls),请按不同的领域创建例如/template/xx/xxx.xls
      * @param sheetIndex Excel中某个页签（0..）
      * @param unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -314,10 +312,10 @@ public class ExportExcelBaseService {
      * @return
      * @throws ToolBusinessException
      */
-    public byte[] export(Map<String, String> headMap, List<?> dataList, String fieldName,
+    public byte[] export(Map<String, String> headMap, List<T> dataList, String fieldName,
                                                 int sheetIndex, List<String> unFixColList, Map<String, String> userMap,
                                                 String sheetName, Integer... notSetLineHeight) throws ToolBusinessException {
-        ExportExcelParamDto paramDto = new ExportExcelParamDto(headMap, dataList, fieldName, sheetIndex);
+        ExportExcelParamDto<T> paramDto = new ExportExcelParamDto<>(headMap, dataList, fieldName, sheetIndex);
         paramDto.setUnFixColList(unFixColList);
         paramDto.setUnFixColNameMap(userMap);
         paramDto.setSheetName(sheetName);
@@ -338,9 +336,9 @@ public class ExportExcelBaseService {
      * @return
      * @throws ToolBusinessException
      */
-    public byte[] export(Map<String, String> headMap, List<?> dataList, String fieldName,
+    public byte[] export(Map<String, String> headMap, List<T> dataList, String fieldName,
                                                 int sheetIndex, Map<String, String> userMap, List<String> unFixColList ) throws ToolBusinessException {
-        ExportExcelParamDto paramDto = new ExportExcelParamDto(headMap, dataList, fieldName, sheetIndex);
+        ExportExcelParamDto<T> paramDto = new ExportExcelParamDto<>(headMap, dataList, fieldName, sheetIndex);
         paramDto.setUnFixColList(unFixColList);
         paramDto.setUnFixColNameMap(userMap);
         paramDto.setUnFixColsType(1);
@@ -350,7 +348,7 @@ public class ExportExcelBaseService {
     /**
      * 导出Excel文件
      * @param paramDto#headMap Excel头数据
-     * @see ExportExcelParamDto#dataList 数据列表 com.ttk.edf.base.DTO 的子类
+     * @see ExportExcelParamDto#dataList 数据列表
      * @see ExportExcelParamDto#fieldName 全名，包含路径及其文件扩展名.xls(例如/template/gl/balanceSumAuxRpt.xls),请按不同的领域创建例如/template/xx/xxx.xls
      * @see ExportExcelParamDto#sheetIndex Excel中某个页签（0..）
      * @see ExportExcelParamDto#unFixColList Excel变动列数据（变动列只支持在模板最前面）
@@ -358,7 +356,7 @@ public class ExportExcelBaseService {
      * @return
      * @throws ToolBusinessException
      */
-    public byte[] export(ExportExcelParamDto paramDto) throws ToolBusinessException {
+    public byte[] export(ExportExcelParamDto<T> paramDto) throws ToolBusinessException {
         if (paramDto.getFieldName() == null) {
             throw new ToolBusinessException("80564", "报表文件名称不能为空！");
         }
@@ -598,7 +596,8 @@ public class ExportExcelBaseService {
                     }
                 }
                 if (!isFind) {
-                    logger.error(String.format("动态列【%s】在模板中未找到对应列", fieldName));
+                    System.out.println(String.format("动态列【%s】在模板中未找到对应列", fieldName));
+//                    logger.error(String.format("动态列【%s】在模板中未找到对应列", fieldName));
                 }
             }
             // 隐藏多余的动态列
@@ -988,7 +987,7 @@ public class ExportExcelBaseService {
         clazz = clazz.getSuperclass();
         while (null != clazz) {
             Field[] superFields = clazz.getDeclaredFields();
-            objfields = (Field[]) ArrayUtils.addAll(objfields, superFields);
+            objfields = ArrayUtils.addAll(objfields, superFields);
             clazz = clazz.getSuperclass();
         }
 
@@ -1007,7 +1006,8 @@ public class ExportExcelBaseService {
                 }
             }
             if (!isFind) {
-                logger.warn(String.format("【%s】未找到对应数据源 ", fileDataInfo.fieldName));
+                System.out.println(String.format("【%s】未找到对应数据源 ", fileDataInfo.fieldName));
+//                logger.warn(String.format("【%s】未找到对应数据源 ", fileDataInfo.fieldName));
                 fileDataInfo.fieldType = this.emptyString;
                 fileDataInfo.isErrorOrNoSuchMethod = true;
             }
@@ -1062,10 +1062,12 @@ public class ExportExcelBaseService {
                         value = getFieldValue(obj, fieldName);
                     } catch (NoSuchMethodException ex) {
                         fileDataInfo.isErrorOrNoSuchMethod = true;
-                        logger.warn(String.format("【%s】未找到对应的【get】方法", fileDataInfo.fieldName), ex);
+                        System.out.println(String.format("【%s】未找到对应的【get】方法", fileDataInfo.fieldName));
+//                        logger.warn(String.format("【%s】未找到对应的【get】方法", fileDataInfo.fieldName), ex);
                     } catch (Exception ex) {
                         fileDataInfo.isErrorOrNoSuchMethod = true;
-                        logger.warn(String.format("【%s】未找到对应的【get】方法:%s", fileDataInfo.fieldName, JSONObject.toJSONString(ex)));
+                        System.out.println(String.format("【%s】未找到对应的【get】方法:%s", fileDataInfo.fieldName, JSONObject.toJSONString(ex)));
+//                        logger.warn(String.format("【%s】未找到对应的【get】方法:%s", fileDataInfo.fieldName, JSONObject.toJSONString(ex)));
                     }
                     if(fileDataInfo.isErrorOrNoSuchMethod){
                         continue;
@@ -1177,13 +1179,15 @@ public class ExportExcelBaseService {
                                 }
                                 cell.setCellValue(doubleValue);
                             }else {
-                                logger.warn(String.format("【%s】不支持的字段类型:%s ", fileDataInfo.fieldName, fileDataInfo.fieldType));
+                                System.out.println(String.format("【%s】不支持的字段类型:%s ", fileDataInfo.fieldName, fileDataInfo.fieldType));
+//                                logger.warn(String.format("【%s】不支持的字段类型:%s ", fileDataInfo.fieldName, fileDataInfo.fieldType));
                                 fileDataInfo.isErrorOrNoSuchMethod = true;
                             }
                     }
 
                 } catch (Exception ex) {
-                    logger.warn(String.format("【%s】数据读取异常 ", fileDataInfo.fieldName), ex);
+                    System.out.println(String.format("【%s】数据读取异常 ", fileDataInfo.fieldName));
+//                    logger.warn(String.format("【%s】数据读取异常 ", fileDataInfo.fieldName), ex);
                 }
             } else {
                 cell.setCellValue(emptyString);
@@ -1312,7 +1316,7 @@ public class ExportExcelBaseService {
         }
 
         // Excel数据
-        protected List<?> dataList;
+        protected List<T> dataList;
         // Excel配置信息
         protected List<FileDataInfo> headAndEbdConfig;
         protected List<FileDataInfo> bodyConfig;

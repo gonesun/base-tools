@@ -6,12 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class ExportExcelParamDto extends DTO {
+public class ExportExcelParamDto<T> extends DTO {
     private static final long serialVersionUID = 7903345837375699760L;
 
     public ExportExcelParamDto(){}
 
-    public ExportExcelParamDto(Map<String, String> headMap, List<?> dataList, String fieldName, int sheetIndex){
+    public ExportExcelParamDto(Map<String, String> headMap, List<T> dataList, String fieldName, int sheetIndex){
         this.headMap = headMap;
         this.dataList = dataList;
         this.fieldName = fieldName;
@@ -19,7 +19,7 @@ public class ExportExcelParamDto extends DTO {
     }
 
     public ExportExcelParamDto(List<Map<String, String>> headMapList, List<String> sheetNameList,
-                               List<List<?>> batchDataList, String fieldName, int sheetIndex){
+                               List<List<T>> batchDataList, String fieldName, int sheetIndex){
         this.headMapList = headMapList;
         this.sheetNameList = sheetNameList;
         this.batchDataList = batchDataList;
@@ -28,7 +28,7 @@ public class ExportExcelParamDto extends DTO {
     }
 
     public ExportExcelParamDto(List<Map<String, String>> headMapList, List<String> sheetNameList,
-                               List<List<?>> batchDataList, String fieldName, List<Integer> sheetIndexList){
+                               List<List<T>> batchDataList, String fieldName, List<Integer> sheetIndexList){
         this.headMapList = headMapList;
         this.sheetNameList = sheetNameList;
         this.batchDataList = batchDataList;
@@ -54,7 +54,7 @@ public class ExportExcelParamDto extends DTO {
     /**
      * 数据
      */
-    private List<?> dataList;
+    private List<T> dataList;
 
     /**
      * 动态列
@@ -89,7 +89,7 @@ public class ExportExcelParamDto extends DTO {
     /**
      * 数据
      */
-    private List<List<?>> batchDataList;
+    private List<List<T>> batchDataList;
 
     /**
      * 是否需要目录

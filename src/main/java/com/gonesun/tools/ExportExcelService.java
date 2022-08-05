@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gonesun.dto.ExportExcelParamDto;
 import com.gonesun.dto.ToolBusinessException;
 import com.gonesun.utils.StringUtil;
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,12 +24,10 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class ExportExcelService {
-	private static final Logger logger = LoggerFactory.getLogger(ExportExcelService.class);
+//	private static final Logger logger = LoggerFactory.getLogger(ExportExcelService.class);
 
 	private final String emptyString = "";
 
@@ -337,7 +334,8 @@ public class ExportExcelService {
 		} catch (ToolBusinessException ex) {
 			throw ex;
 		} catch (Exception ex) {
-			logger.error("导出Excel失败" + JSONObject.toJSONString(ex));
+			System.out.println("导出Excel失败" + JSONObject.toJSONString(ex));
+//			logger.error("导出Excel失败" + JSONObject.toJSONString(ex));
 			throw new ToolBusinessException("80562", "导出Excel失败！", null, ex);
 		}
 		return bytes;
@@ -381,7 +379,8 @@ public class ExportExcelService {
 		} catch (ToolBusinessException ex) {
 			throw ex;
 		} catch (Exception ex) {
-			logger.error("导出Excel失败" + JSONObject.toJSONString(ex));
+			System.out.println("导出Excel失败" + JSONObject.toJSONString(ex));
+//			logger.error("导出Excel失败" + JSONObject.toJSONString(ex));
 			throw new ToolBusinessException("80562", "导出Excel失败！", null, ex);
 		}
 		return bytes;
@@ -550,7 +549,8 @@ public class ExportExcelService {
 					}
 				}
 				if (!isFind) {
-					logger.error(String.format("动态列【%s】在模板中未找到对应列", fieldName));
+					System.out.println(String.format("动态列【%s】在模板中未找到对应列", fieldName));
+//					logger.error(String.format("动态列【%s】在模板中未找到对应列", fieldName));
 				}
 			}
 			// 隐藏多余的动态列
@@ -927,7 +927,7 @@ public class ExportExcelService {
 		clazz = clazz.getSuperclass();
 		while (null != clazz) {
 			Field[] superFields = clazz.getDeclaredFields();
-			objfields = (Field[]) ArrayUtils.addAll(objfields, superFields);
+			objfields = ArrayUtils.addAll(objfields, superFields);
 			clazz = clazz.getSuperclass();
 		}
 
@@ -946,7 +946,8 @@ public class ExportExcelService {
 				}
 			}
 			if (!isFind) {
-				logger.warn(String.format("【%s】未找到对应数据源 ", fileDataInfo.fieldName));
+				System.out.println(String.format("【%s】未找到对应数据源 ", fileDataInfo.fieldName));
+//				logger.warn(String.format("【%s】未找到对应数据源 ", fileDataInfo.fieldName));
 				fileDataInfo.fieldType = this.emptyString;
 				fileDataInfo.isErrorOrNoSuchMethod = true;
 			}
@@ -1000,7 +1001,8 @@ public class ExportExcelService {
 						value = getFieldValue(obj, fieldName);
 					} catch (NoSuchMethodException ex) {
 						fileDataInfo.isErrorOrNoSuchMethod = true;
-						logger.warn(String.format("【%s】未找到对应的【%s】方法 ", fileDataInfo.fieldName, methodName), ex);
+						System.out.println(String.format("【%s】未找到对应的【%s】方法 ", fileDataInfo.fieldName, methodName));
+//						logger.warn(String.format("【%s】未找到对应的【%s】方法 ", fileDataInfo.fieldName, methodName), ex);
 					} catch (Exception ex) {
 						break;
 					}
@@ -1071,13 +1073,15 @@ public class ExportExcelService {
 							Object ob = ((Map<String, Double>) value).get(secondName);
 							cell.setCellValue(Double.valueOf(String.valueOf(ob == null ? "" : ob))) ;
 						}else {
-							logger.warn(String.format("【%s】不支持的字段类型:%s ", fileDataInfo.fieldName, fileDataInfo.fieldType));
+							System.out.println(String.format("【%s】不支持的字段类型:%s ", fileDataInfo.fieldName, fileDataInfo.fieldType));
+//							logger.warn(String.format("【%s】不支持的字段类型:%s ", fileDataInfo.fieldName, fileDataInfo.fieldType));
 							fileDataInfo.isErrorOrNoSuchMethod = true;
 						}
 					}
 
 				} catch (Exception ex) {
-					logger.warn(String.format("【%s】数据读取异常 ", fileDataInfo.fieldName), ex);
+					System.out.println(String.format("【%s】数据读取异常 ", fileDataInfo.fieldName));
+//					logger.warn(String.format("【%s】数据读取异常 ", fileDataInfo.fieldName), ex);
 				}
 			} else {
 				cell.setCellValue(emptyString);
