@@ -96,6 +96,11 @@ public class ExportExcelParamDto<T> extends DTO {
      */
     private boolean needCatalog;
 
+    /**
+     * 是否不复制设置行行高
+     * 0 复制
+     * 1 不复制
+     */
     private Integer notSetLineHeight;
 
     /**
@@ -111,8 +116,8 @@ public class ExportExcelParamDto<T> extends DTO {
 
     /**
      * 动态列类型:(参照财务多栏账，生产入库成本测算打印)
-     * 0、动态调整列（Excel模板中已经有这些列，只是需要调整顺序与列名）
-     * 1、动态添加列（Excel模板中没有这些列，需要动态添加。《注：合并单元格暂时不支持》）
+     * #0、动态调整列（Excel模板中已经有这些列，只是需要调整顺序与列名，隐藏多余的动态列）
+     * #1、动态添加列（Excel模板中没有这些列，需要动态添加。《注：该模式暂不支持合并单元格》）
      */
     private int unFixColsType = 0;
 

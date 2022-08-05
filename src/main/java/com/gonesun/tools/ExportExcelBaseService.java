@@ -128,6 +128,20 @@ public class ExportExcelBaseService<T> {
         return exportAll(paramDto);
     }
 
+    /**
+     * 导出多页签
+     * @param paramDto
+     * @see ExportExcelParamDto#headMapList  Excel头数据
+     * @see ExportExcelParamDto#sheetNameList 页签名称列表
+     * @see ExportExcelParamDto#dataList 页签数据列表
+     * @see ExportExcelParamDto#fieldName 报表Excel模板文件名（带路径的全名）
+     * @see ExportExcelParamDto#sheetIndexList Excel中页签（0..）列表
+     * @see ExportExcelParamDto#unFixColList Excel变动列数据（变动列只支持在模板最前面）
+     * @see ExportExcelParamDto#unFixColNameMap 自定义档案字典 <Code,Name>
+     * @see ExportExcelParamDto#needCatalog 是否创建目录(第一个页签创建后面页签的超链接目录)
+     * @return
+     * @throws ToolBusinessException
+     */
     public byte[] exportAll(ExportExcelParamDto<T> paramDto) throws ToolBusinessException {
         List<Map<String, String>> headMapList = paramDto.getHeadMapList();
         List<String> pageTitleList = paramDto.getSheetNameList();
@@ -347,14 +361,16 @@ public class ExportExcelBaseService<T> {
 
     /**
      * 导出Excel文件
-     * @param paramDto#headMap Excel头数据
+     * @param paramDto 导出参数
+     * @see ExportExcelParamDto#headMap Excel头数据
      * @see ExportExcelParamDto#dataList 数据列表
      * @see ExportExcelParamDto#fieldName 全名，包含路径及其文件扩展名.xls(例如/template/gl/balanceSumAuxRpt.xls),请按不同的领域创建例如/template/xx/xxx.xls
      * @see ExportExcelParamDto#sheetIndex Excel中某个页签（0..）
-     * @see ExportExcelParamDto#unFixColList Excel变动列数据（变动列只支持在模板最前面）
+     * @see ExportExcelParamDto#unFixColsType 动态列类型
+     * @see ExportExcelParamDto#unFixColList Excel变动列数据（unFixColsType=0时，变动列只支持在模板最前面）
      * @see ExportExcelParamDto#unFixColNameMap 自定义档案字典 <Code,Name>
-     * @return
-     * @throws ToolBusinessException
+     * @return Excel二进制数据
+     * @throws ToolBusinessException 运行时异常
      */
     public byte[] export(ExportExcelParamDto<T> paramDto) throws ToolBusinessException {
         if (paramDto.getFieldName() == null) {
@@ -1364,7 +1380,9 @@ public class ExportExcelBaseService<T> {
         protected int lastColumn;
 
         /**
-         * 是否复制设置行行高
+         * 是否不复制设置行行高
+         * 0 复制
+         * 1 不复制
          */
         int notSetLineHeight = 0;
 
