@@ -180,7 +180,7 @@ public class ExportExcelBaseService<T> {
             if(isDiffIndex){
                 this.init(unFixColList, sheetIndexList, excelBaseInfoDto, userMap);
             }else {
-                this.init(unFixColList, sheetIndexList, excelBaseInfoDto, userMap);
+                this.init(unFixColList, sheetIndex, excelBaseInfoDto, userMap);
             }
         } catch (Exception ex) {
             throw new ToolBusinessException("80562", "导出Excel失败【初始化表格失败】！", null, ex);
